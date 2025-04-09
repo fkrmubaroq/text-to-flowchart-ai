@@ -1,13 +1,14 @@
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Copy, Download } from 'lucide-react';
+import { Copy, Download, ExpandIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import mermaid from 'mermaid';
 import Markdown from 'react-markdown'
-import { marked } from 'marked';
 import { extractMermaidContent } from '@/lib/utils';
 import { Line, Shimmer } from './ui/shimmer';
+import { useModal } from '@/lib/hooks';
+import ModalPreviewFullScreen from './ModalPreviewFullScreen';
 
 interface FlowchartOutputProps {
   mermaidCode: string;
@@ -15,14 +16,14 @@ interface FlowchartOutputProps {
 }
 
 const FlowchartOutput = ({ isLoading, mermaidCode }: FlowchartOutputProps) => {
-  const { raw: text, oneLine } = useMemo(() => extractMermaidContent(mermaidCode), [mermaidCode])
+  const { raw: text } = useMemo(() => extractMermaidContent(mermaidCode), [mermaidCode])
   return (
     <div className="flex flex-col gap-2 h-full">
       <div className="flex flex-col lg:flex-row gap-4 h-full">
         {isLoading ? <ShimmerResult /> :
           <>
             <MermaidCode text={text} />
-            <SvgResult text={text} />
+            <Preview text={text} />
           </>
         }
       </div>
@@ -42,7 +43,7 @@ const MermaidCode = ({ text }: { text: string; }) => {
 
   return <div className="flex flex-col gap-y-1 w-full">
     <h2 className="text-lg font-medium">Mermaid Code</h2>
-    <div className="flex-1 relative border rounded-lg bg-secondary/30 p-4 overflow-auto">
+    <span className="inline relative border rounded-lg bg-secondary/30 p-4 overflow-auto">
       {text &&
         <Button
           variant="outline"
@@ -69,13 +70,13 @@ const MermaidCode = ({ text }: { text: string; }) => {
           <p>Mermaid Code will appear here after generation</p>
         </div>
       )}
-    </div>
+    </span>
   </div>
 }
 
-const SvgResult = ({ text }: { text: string }) => {
+const Preview = ({ text }: { text: string }) => {
   const svgRef = useRef<HTMLDivElement>(null);
-
+  const { hideModal, show, showModal } = useModal<"preview-full-screen">();
   const downloadSVG = () => {
     if (!svgRef.current || !svgRef.current.querySelector('svg')) {
       toast.error('No diagram to download');
@@ -126,32 +127,46 @@ const SvgResult = ({ text }: { text: string }) => {
     }
   }, [text, document.documentElement.classList.contains('dark')]);
 
-  return <div className="flex flex-col gap-y-1 w-full">
-    <h2 className="text-lg font-medium">Preview</h2>
-    <div className="flex-1 border relative  rounded-lg bg-card p-4 overflow-auto">
-      {text && <Button
-        variant="outline"
-        size="icon"
-        onClick={downloadSVG}
-        disabled={!text}
-        className="text-xs w-8 h-8 absolute top-2 right-2"
-      >
-        <Download className="h-3.5 w-3.5" />
-      </Button>
-      }
-      <div
-        ref={svgRef}
-        className="mermaid-container h-full flex items-center justify-center"
-      >
-        {!text && (
-          <div className="text-muted-foreground text-center">
-            <p>Preview will appear here</p>
-          </div>
-        )}
+  return <>
+    <ModalPreviewFullScreen open={show} onOpenChange={hideModal} text={text} />
+
+    <div className="flex flex-col gap-y-1 w-full">
+      <h2 className="text-lg font-medium">Preview</h2>
+      <div className="flex-1 border relative  rounded-lg bg-card p-4 overflow-auto">
+        {text && <div className="absolute right-2 flex gap-x-2 top-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => showModal("preview-full-screen")}
+            disabled={!text}
+            className="text-xs w-8 h-8 "
+          >
+            <ExpandIcon className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={downloadSVG}
+            disabled={!text}
+            className="text-xs w-8 h-8 "
+          >
+            <Download className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+        }
+        <div
+          ref={svgRef}
+          className="mermaid-container h-full flex items-center justify-center"
+        >
+          {!text && (
+            <div className="text-muted-foreground text-center">
+              <p>Preview will appear here</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-
+  </>
 }
 
 
@@ -164,8 +179,8 @@ function ShimmerResult() {
 
 function ShimmerItem() {
   return <Shimmer className="flex flex-col gap-y-2 w-full">
-      <Line width="w-[200px]" height="h-[28px]"/>
-      <Line width='w-full ' height='h-[250px]' />
-    </Shimmer>
+    <Line width="w-[200px]" height="h-[28px]" />
+    <Line width='w-full ' height='h-[250px]' />
+  </Shimmer>
 }
 export default FlowchartOutput;

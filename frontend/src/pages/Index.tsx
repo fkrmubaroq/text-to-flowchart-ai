@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Header from '@/components/Header';
 import TextInput from '@/components/TextInput';
 import FlowchartOutput from '@/components/FlowchartOutput';
