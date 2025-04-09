@@ -1,4 +1,5 @@
 # 🧠 Local AI Flowchart Generator with Ollama + Mistral
+![alt text](images/preview.png)
 
 This project allows you to generate flowcharts in Mermaid.js format using natural language prompts — powered by the `mistral` model running locally with [Ollama](https://ollama.com).
 
