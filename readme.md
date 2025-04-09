@@ -84,12 +84,12 @@ const response = await axios.post("http://localhost:11434/api/chat", {
 
 ## ✅ Output Example
 
-\`\`\`mermaid
+```mermaid
 graph TD
   A[User logs in] --> B{Credentials valid?}
   B -- Yes --> C[Dashboard]
   B -- No --> D[Show error message]
-\`\`\`
+```
 
 ---
 
@@ -109,15 +109,6 @@ graph TD
 | `llama2`    | General LLM, 7B params     |
 | `codellama` | Code-focused model         |
 | `gemma`     | Lightweight, fast responses |
-
----
-
-## 🤖 Want a Web UI?
-
-You can connect this API with a frontend using:
-- React + Mermaid.js
-- Plain HTML + Mermaid CDN
-- Export to PDF using Puppeteer
 
 ---
 

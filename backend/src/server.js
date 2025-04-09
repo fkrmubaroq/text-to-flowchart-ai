@@ -12,7 +12,7 @@ app.post("/generate-flowchart", async (req, res) => {
 
   try {
     const response = await axios.post(`${process.env.LOCAL_MISTRAL_URL}/api/chat`, {
-      model: "mistral",  // bisa ganti ke llama2, codellama, dll
+      model: "mistral", 
       messages: [
         { role: "system", content: "You are a flowchart generator that returns diagrams using Mermaid.js format only, that means only start with 'flowchart TB'. and don't summarize the process " },
         { role: "user", content: `Create a flowchart in Mermaid.js format for this process: ${prompt}` }
