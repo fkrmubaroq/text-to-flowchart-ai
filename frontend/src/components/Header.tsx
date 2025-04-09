@@ -35,7 +35,7 @@ const Header = () => {
             asChild
           >
             <a 
-              href="https://github.com/mermaid-js/mermaid" 
+              href="https://github.com/fkrmubaroq/text-to-flowchart-ai" 
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="GitHub"
